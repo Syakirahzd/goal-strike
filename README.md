@@ -45,8 +45,7 @@
    7) Push project dan secara otomatis akan terdeploy
 
 2. Buatlah bagan yang berisi request client ke web aplikasi berbasis Django beserta responnya dan jelaskan pada bagan tersebut kaitan antara urls.py, views.py, models.py, dan berkas html!
-   ![Uploading Django.png…]()
-
+<img width="586" height="928" alt="Django" src="https://github.com/user-attachments/assets/715833b5-bd63-4720-b254-5f45c28592de" />
 
 3. Jelaskan peran settings.py dalam proyek Django!
    settings.py merupakan tempat untuk melakukan konfigurasi project, dalam file tersebut kita dapat melakukan penyesuaian untuk project atau aplikasi yang kita buat, termasuk pengaturan environment, deployment, dan lain-lain.
