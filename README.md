@@ -66,12 +66,13 @@
 Terima kasih tim Asdos.
 
 Referensi:
+
 Tim Dosen PBP. (n.d.). *Introduction to the Internet and Web Framework* [PowerPoint slides]. Fakultas Ilmu Komputer, Universitas Indonesia.
 
 Tim Pengajar Pemrograman Berbasis Platform PBP. (2025, 27 Agustus). *Tutorial 0: Konfigurasi dan Instalasi Git dan Django* [Halaman web]. Fakultas Ilmu Komputer, Universitas Indonesia. Diakses tanggal 10 September 2025, dari pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-0
 
 Tim Pengajar Pemrograman Berbasis Platform PBP. (2025, 21 Agustus). *Tutorial 1: Pengenalan Aplikasi Django dan Model-View-Template (MVT) pada Django* [Halaman web]. Fakultas Ilmu Komputer, Universitas Indonesia. Diakses tanggal 10 September 2025, dari pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-1
 
-Django Software Foundation. (n.d.). *Django: The web framework for perfectionists with deadlines*. Diakses tanggal 10 September 2025, dari https://www.djangoproject.com/
+Django Software Foundation. (n.d.). *Django: The web framework for perfectionists with deadlines*. Diakses tanggal 10 September 2025, dari djangoproject.com
 
 Amazon Web Services. (2024). *Apa itu Django?*. Diakses pada 10 September 2025, dari aws.amazon.com/id/what-is/django/
