@@ -39,7 +39,7 @@
    1) Membuat project di PWS
    2) Menyalin credentials berupa username dan password
    3) Menginisiasikan environs sesuai dengan .env.prods
-   4) Menambahkan remote pws ke project dengan git remote add pws https://pbp.cs.ui.ac.id/2ysyakirah.zahra/goalstrike
+   4) Menambahkan remote pws ke project dengan git remote add pws https://pbp.cs.ui.ac.id/syakirah.zahra/goalstrike
    5) Lalu push project ke PWS dengan git add, commit, dan git push pws master
    6) Selanjutnya akan diminta username dan password, masukan sesuai dengan yang telah diberikan diawal
    7) Push project dan secara otomatis akan terdeploy
@@ -67,7 +67,11 @@ Terima kasih tim Asdos.
 
 Referensi:
 Tim Dosen PBP. (n.d.). *Introduction to the Internet and Web Framework* [PowerPoint slides]. Fakultas Ilmu Komputer, Universitas Indonesia.
+
 Tim Pengajar Pemrograman Berbasis Platform PBP. (2025, 27 Agustus). *Tutorial 0: Konfigurasi dan Instalasi Git dan Django* [Halaman web]. Fakultas Ilmu Komputer, Universitas Indonesia. Diakses tanggal 10 September 2025, dari pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-0
+
 Tim Pengajar Pemrograman Berbasis Platform PBP. (2025, 21 Agustus). *Tutorial 1: Pengenalan Aplikasi Django dan Model-View-Template (MVT) pada Django* [Halaman web]. Fakultas Ilmu Komputer, Universitas Indonesia. Diakses tanggal 10 September 2025, dari pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-1
+
 Django Software Foundation. (n.d.). *Django: The web framework for perfectionists with deadlines*. Diakses tanggal 10 September 2025, dari https://www.djangoproject.com/
+
 Amazon Web Services. (2024). *Apa itu Django?*. Diakses pada 10 September 2025, dari aws.amazon.com/id/what-is/django/
