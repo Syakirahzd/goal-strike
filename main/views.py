@@ -12,7 +12,7 @@ def show_main(request):
     product_list = Product.objects.all()
 
     context = {
-        'title' : 'GoalStrike',
+        'title' : '== GoalStrike ==',
         'npm': '2406353950',
         'name': 'Syakirah Zahra Dhawini',
         'class': 'PBP D',
