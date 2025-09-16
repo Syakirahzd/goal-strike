@@ -1,16 +1,44 @@
-<h1>{{title}}</h1>
-<h2>FootBall Shop</h2>
+<h1>GoalStrike</h1>
 
+<h5>NPM: </h5>
+<p>{{ npm }}</p>
 
-<h3>WELCOME TO OUR SHOP!!!</h3>
-<h4>ENJOY YOUR SHOPPING</h4>
-<h5>your experience is our priority</h5>
+<h5>Name:</h5>
+<p>{{ name }}</p>
 
-<h4>+++++++++++++++++++++++++++++++++++++++++</h4>
+<h5>Class:</h5>
+<p>{{ class }}</p>
 
-<h3>Name: </h3>
-<p>{{name}}</p> 
-<h3>NPM: </h3>
-<p>{{npm}}</p> 
-<h3>Class: </h3>
-<p>{{class}}</p> 
+<a href="{% url 'main:create_product' %}">
+  <button>+ Add Product</button>
+</a>
+
+<hr>
+
+{% if not product_list %}
+<p>Belum ada product dalam GoalStrike.</p>
+{% else %}
+
+{% for product in product_list %}
+<div>
+  <h2><a href="{% url 'main:show_product' product.id %}">{{ product.name }}</a></h2>
+
+  <p> Rp {{ product.price }} |
+    {{ product.get_category_display }}</b>{% if product.is_featured %} | 
+    <b>Featured</b>{% endif %}{% if product.is_news_hot %} | 
+    <b>Hot</b>{% endif %} | Views: {{ product.product_views }}</p>
+
+  {% if product.thumbnail %}
+  <img src="{{ product.thumbnail }}" alt="thumbnail" width="150" height="100">
+  <br />
+  {% endif %}
+
+  <p>{{ product.description|truncatewords:25 }}...</p>
+
+  <p><a href="{% url 'main:show_product' product.id %}"><button>Detail</button></a></p>
+</div>
+
+<hr>
+{% endfor %}
+
+{% endif %}

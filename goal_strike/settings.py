@@ -32,6 +32,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "syakirah-zahra-goalstrike.pbp.cs.ui.ac.id"]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://syakirah-zahra-goalstrike.pbp.cs.ui.ac.i",
+    "https://pbp.cs.ui.ac.id/syakirah.zahra/goalstrike/"
+]
 
 # Application definition
 
@@ -42,7 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-     'main',
+    'main',
 ]
 
 MIDDLEWARE = [
@@ -60,7 +64,7 @@ ROOT_URLCONF = 'goal_strike.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
