@@ -1,78 +1,282 @@
-**Implementasi Aplikasi GoalStrike**
+**1. Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?**
 
-1. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step!
-   a. Membuat sebuah proyek Django baru
-   1) Membuat repository di Github
-   2) Melakukan clone repository ke local
-   3) Menginisiasi virtual environment python di repo dengan python -m venv env dan diaktifkan dengan source env/bin/activate
-   4) Membuat requirements.txt dan melakukan instalasi secara rekursif dengan pip install -r requirements.txt
-   5) Inisiasli proyek django dengan django-admin startproject goasl_strike .
-   6) Membuat .env dan .env.prod dan melakukan konfirgurasi databse dan credentials.
-   7) Melakukan modifikasi pada settings.py untuk menambahkan environment variables, setting ALLOWED_HOSTS untuk mengizinkan host yang dapat deploy, menambahkan konfigurasi PRODUCTION, dan menyesuaikan konfigurasi DATABASES.
-   8) Setelahnya lakukan migrasi dengan python manage.py migrate
-   
-   b. Membuat aplikasi dengan nama main pada proyek
-   1) Membuat aplikasi dengan python manage.py startapp main
-   2) Menambahkan daftar aplikasi main pada INSTALLED_APPS di settings.py
-      
-   c. Melakukan Routing pada proyek agar dapat menjalankan aplikasi main
-   1) Menginisiasikan main pada INSTALLED_APPS di settings.py
-   2) Buat urls.py pada aplikasi main
-   3) Menginisiasikan root ke halaman views.py untuk bisa menjalankan aplikasi
-  
-   d. Membuat model pada aplikasi main dengan nama Product dan memiliki atribute
-   1) import models dari django ke dalam models.py
-   2) membuat class Product dengan parameter models.Model
-   3) Melakukan inisiasi variable yang sesuai dengan atribut wajib yang telah didefinisikan.
-      variabel: name, price, description, thumbnail, category, is_featured
-         
-   e. Membuat fungsi views.py dan dikembalikan dalam template HTML
-   1) Membuat fungsi def show_main(request) pada views.py
-   2) Dalam show_main, berikan return berupa render dengan parameter request, main.html, db.
-   3) Buat folder templates yang berisi index.html dalam apps main, dan buat tampilan html di dalamnya.
-  
-   f. Membuat routing pada urls.py aplikasi main untuk memetakan fungsi yang telah dibuat pada views.py
-   1) Inisiasi nama app dan pathnya pada urls.py di aplikasi main
-   2) Import path dan include pada urls.py di folder project, lalu tambahkan route main di sana dengan path([route], include('main.urls')) untuk menampilkan aplikasi
-  
-   g. Melakukan deployment ke PWS
-   1) Membuat project di PWS
-   2) Menyalin credentials berupa username dan password
-   3) Menginisiasikan environs sesuai dengan .env.prods
-   4) Menambahkan remote pws ke project dengan git remote add pws https://pbp.cs.ui.ac.id/syakirah.zahra/goalstrike
-   5) Lalu push project ke PWS dengan git add, commit, dan git push pws master
-   6) Selanjutnya akan diminta username dan password, masukan sesuai dengan yang telah diberikan diawal
-   7) Push project dan secara otomatis akan terdeploy
+Data delivery merupakan proses inti yang memastikan sebuah platform dapat berjalan dengan optimal. Mekanisme ini berperan dalam menjamin data tersalurkan dengan aman dan efisien di antara berbagai elemen, seperti server, basis data, maupun antarmuka pengguna. Tanpa adanya sistem tersebut, informasi tidak akan tersampaikan ke pengguna atau layanan lain secara tepat waktu, yang pada akhirnya dapat menurunkan fungsionalitas, kinerja, serta kualitas pengalaman pengguna pada platform.
 
-2. Buatlah bagan yang berisi request client ke web aplikasi berbasis Django beserta responnya dan jelaskan pada bagan tersebut kaitan antara urls.py, views.py, models.py, dan berkas html!
-<img width="586" height="928" alt="Django" src="https://github.com/user-attachments/assets/715833b5-bd63-4720-b254-5f45c28592de" />
 
-3. Jelaskan peran settings.py dalam proyek Django!
-   settings.py merupakan tempat untuk melakukan konfigurasi project, dalam file tersebut kita dapat melakukan penyesuaian untuk project atau aplikasi yang kita buat, termasuk pengaturan environment, deployment, dan lain-lain.
-     
-4. Bagaimana cara kerja migrasi database di Django?
-   Migrasi di django merupakan cara untuk membuat perubahan kepada model yang telah dibuat ke schema database.
-   Cara kerja migrasi:
-   a. makemigrations, untuk membuat migrasi baru berdasarkan perubahan yang dibuat terhadap model
-   b. migrate, untuk memasang/melepas migrasi yg dibuat
-   Secara singkat migrasi bekerja dengan cara membuat tabel, ataupun kolom baru berdasarkan model yang dibuat atau attribute yang ditambah
+**2. Menurutmu, mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?**
 
-5. Menurut Anda, dari semua framework yang ada, mengapa framework Django dijadikan permulaan pembelajaran pengembangan perangkat lunak?
-   Django adalah framework Python yang sering disebut sebagai "batteries-included". Artinya, Django memiliki banyak fitur bawaan yang siap pakai, sehingga kita bisa langsung fokus membangun aplikasi tanpa perlu menginstal banyak tambahan fitur. Dengan banyaknya fitur yang siap pakai dan struktur yang jelas, Django memungkinkann pemula menhasilkan aplikasi yang dapat digunakan dalam waktu singkat. Django juga merpuakan proyek Python gratis sehingga cocok untuk mahasiswa yang ingin belajar. Selain itu, di mata kuliah PBP ini kita diharapkan untuk membangun sebuah aplikasi berbasis web dengan Python. Django adalah salah satu framework web yang palimg populer untuk pengembangan aplikasi Python.
+Walaupun memiliki beberapa keterbatasan, JSON secara umum dipandang lebih unggul dan lebih populer dibandingkan XML karena tiga faktor, yaitu:
 
-6. Apakah ada feedback untuk asisten dosen tutorial 1 yang telah kamu kerjakan sebelumnya?
-   Tutorial 1 disampaikan dengan sangat jelas sehingga mudah dipahami. Beban tugas yang diberikan juga proporsional, sehingga saya dapat lebih banyak meluangkan waktu untuk benar-benar memahami materi, bukan hanya sekadar mengikuti instruksi. Hal ini membuat proses belajar menjadi lebih efektif. Selain itu, Tutorial 1 juga sangat membantu saya dalam menyelesaikan Tugas 2.
+a. Sederhana dan Ringkas: Struktur JSON yang minimalis membuatnya lebih mudah dipahami dan ditulis baik oleh manusia maupun mesin. Berbeda dengan XML yang menggunakan banyak tag pembuka dan penutup, JSON lebih efisien sehingga ukuran file menjadi lebih kecil, penggunaan bandwidth berkurang, dan proses transfer data berlangsung lebih cepat.
 
-Terima kasih tim Asdos.
+b. Kecepatan Pemrosesan: Parsing JSON cenderung lebih cepat dibandingkan XML. Dalam konteks aplikasi yang sering bertukar data, seperti API, hal ini berpengaruh besar terhadap kinerja sistem dan kenyamanan pengguna.
 
-Referensi:
+c. Integrasi Native: Karena formatnya serupa dengan objek JavaScript, JSON dapat diproses langsung tanpa perlu library tambahan yang rumit. Hal ini membuat penerapannya pada aplikasi web menjadi lebih praktis.
 
-Tim Dosen PBP. (n.d.). *Introduction to the Internet and Web Framework* [PowerPoint slides]. Fakultas Ilmu Komputer, Universitas Indonesia.
+Walaupun XML tetap memiliki kelebihan, seperti validasi skema dan dukungan namespace, JSON dianggap lebih relevan untuk kebutuhan modern karena menawarkan kecepatan, efisiensi, serta kemudahan integrasi yang sangat penting, terutama pada aplikasi berbasis web.
 
-Tim Pengajar Pemrograman Berbasis Platform PBP. (2025, 27 Agustus). *Tutorial 0: Konfigurasi dan Instalasi Git dan Django* [Halaman web]. Fakultas Ilmu Komputer, Universitas Indonesia. Diakses tanggal 10 September 2025, dari pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-0
 
-Tim Pengajar Pemrograman Berbasis Platform PBP. (2025, 21 Agustus). *Tutorial 1: Pengenalan Aplikasi Django dan Model-View-Template (MVT) pada Django* [Halaman web]. Fakultas Ilmu Komputer, Universitas Indonesia. Diakses tanggal 10 September 2025, dari pbp-fasilkom-ui.github.io/ganjil-2026/docs/tutorial-1
+**3. Jelaskan fungsi dari method is_valid() pada form Django dan mengapa kita membutuhkan method tersebut?**
 
-Django Software Foundation. (n.d.). *Django: The web framework for perfectionists with deadlines*. Diakses tanggal 10 September 2025, dari djangoproject.com
+is_valid() adalah method pada form Django yang digunakan untuk memvalidasi data yang dikirimkan pengguna. Method ini akan memeriksa apakah data dalam form (biasanya berasal dari request.POST) sudah sesuai dengan aturan yang ditentukan di dalam ProductForm, seperti jenis data, panjang karakter, serta kelengkapan field wajib.
 
-Amazon Web Services. (2024). *Apa itu Django?*. Diakses pada 10 September 2025, dari aws.amazon.com/id/what-is/django/
+Apabila seluruh data sesuai dengan aturan, is_valid() akan mengembalikan nilai True sehingga data dapat diproses lebih lanjut, misalnya disimpan ke dalam database. Namun, jika ada data yang tidak valid pada satu atau beberapa field, method ini akan mengembalikan nilai False sekaligus memberikan pesan error yang relevan.
+
+Dengan kata lain, is_valid() berfungsi sebagai gerbang utama yang menjaga aplikasi agar hanya menerima data yang valid. Mekanisme ini memastikan integritas data dan keamanan aplikasi tetap terjamin, karena mencegah masuknya input yang salah ataupun berpotensi membahayakan.
+
+
+**4. Mengapa kita membutuhkan csrf_token saat membuat form di Django? Apa yang dapat terjadi jika kita tidak menambahkan csrf_token pada form Django? Bagaimana hal tersebut dapat dimanfaatkan oleh penyerang?**
+
+csrf_token adalah fitur keamanan penting di Django yang digunakan untuk melindungi form dari serangan CSRF (Cross-Site Request Forgery). Token ini berupa nilai unik yang disisipkan ke setiap form, dengan tujuan memastikan bahwa permintaan yang dikirim ke server benar-benar berasal dari form sah di aplikasi kita, bukan dari situs lain yang berbahaya.
+
+Secara sederhana, serangan CSRF terjadi ketika seorang pengguna yang sedang login di situs kita tanpa sadar mengunjungi situs berbahaya milik penyerang. Situs tersebut dapat memaksa browser pengguna mengirimkan permintaan ke server kita. Karena browser otomatis melampirkan cookie sesi yang valid, tanpa adanya token verifikasi, server tidak mampu membedakan apakah request berasal dari sumber asli atau dari pihak berbahaya. Akibatnya, server bisa saja memproses perintah penyerang, misalnya mengubah data pengguna atau melakukan aksi yang merugikan. Alur serangan CSRF dapat dijelaskan sebagai berikut:
+
+a. Pengguna login ke aplikasi kita dan browser menyimpan session cookie yang menandakan pengguna sudah terotentikasi.
+
+b. Penyerang membuat situs berbahaya yang berisi form tersembunyi untuk mengirim request ke URL aplikasi kita.
+
+c. Pengguna yang masih login di aplikasi kita dan membuka situs berbahaya. Browser secara otomatis menjalankan form tersembunyi tersebut tanpa sepengetahuan pengguna.
+
+Jika tidak ada csrf_token yang divalidasi, Django akan menganggap request tersebut sah karena dikirim oleh pengguna yang terotentikasi, lalu memprosesnya (misalnya menambahkan produk ke keranjang atau mengubah data).
+
+Dengan adanya csrf_token, Django dapat memverifikasi bahwa setiap permintaan memang berasal dari form resmi aplikasi, sehingga serangan CSRF dapat dicegah.
+
+
+**5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).**
+
+a. kita membuat direktori baru bernama template di dalam direktori utama. di dalam template tersebut, buat base.html sebagai kerangka umum dan hubungkan base.html ini dengan settings.py agar base.html terdeteksi sebagai berkas template
+
+b. Kita ke direktori template yang ada di dalam direktori main, edit berkas main.html
+
+c. Masih di dalam direktori main, kita tambahkan berkas forms.py 
+```python
+from django.forms import ModelForm
+from main.models import Product
+
+class ProductForm(ModelForm):
+    class Meta:
+        model = Product
+        fields = ["name", "price", "description", "thumbnail", "category", "is_featured"]
+```
+
+d. buka berkas views.py dalam direktori main dan tambahkan import dan fungsi fungsi fungsi yang dibutuhkan
+
+```python
+from django.shortcuts import render, redirect, get_object_or_404
+from main.forms import ProductForm
+from main.models import Product
+
+
+# Create your views here.
+def show_main(request):
+    product_list = Product.objects.all()
+
+    context = {
+        'title' : '== GoalStrike ==',
+        'npm': '2406353950',
+        'name': 'Syakirah Zahra Dhawini',
+        'class': 'PBP D',
+        'product_list': product_list,
+    }
+
+    return render(request, "main.html", context)
+
+def create_product(request):
+    form = ProductForm(request.POST or None)
+
+    if form.is_valid() and request.method == "POST":
+        form.save()
+        return redirect('main:show_main')
+
+    context = {'form': form}
+    return render(request, "create_product.html", context)
+
+def show_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    product.increment_product()
+
+    context = {
+        'product': product
+    }
+
+    return render(request, "product_detail.html", context)
+```
+e. buka berkas urls.py di dalam main, tambahkan urlpatterns nya
+```python
+path('create-product/', create_product, name='create_product'),
+path('product/<str:id>/', show_product, name='show_product'),
+```
+
+f. update berkas main.html buat beberapa berkas di dalam direktori template (main/template)
+main.html
+```html
+<h1>GoalStrike</h1>
+
+<h5>NPM: </h5>
+<p>{{ npm }}</p>
+
+<h5>Name:</h5>
+<p>{{ name }}</p>
+
+<h5>Class:</h5>
+<p>{{ class }}</p>
+
+<a href="{% url 'main:create_product' %}">
+  <button>+ Add Product</button>
+</a>
+
+<hr>
+
+{% if not product_list %}
+<p>Belum ada product dalam GoalStrike.</p>
+{% else %}
+
+{% for product in product_list %}
+<div>
+  <h2><a href="{% url 'main:show_product' product.id %}">{{ product.name }}</a></h2>
+
+  <p> Rp {{ product.price }} |
+    {{ product.get_category_display }}</b>{% if product.is_featured %} | 
+    <b>Featured</b>{% endif %}{% if product.is_news_hot %} | 
+    <b>Hot</b>{% endif %} | Views: {{ product.product_views }}</p>
+
+  {% if product.thumbnail %}
+  <img src="{{ product.thumbnail }}" alt="thumbnail" width="150" height="100">
+  <br />
+  {% endif %}
+
+  <p>{{ product.description|truncatewords:25 }}...</p>
+
+  <p><a href="{% url 'main:show_product' product.id %}"><button>Detail Product</button></a></p>
+</div>
+
+<hr>
+{% endfor %}
+
+{% endif %}
+```
+
+create_product
+```html
+{% extends 'base.html' %} 
+{% block content %}
+<h1>Add Product</h1>
+
+<form method="POST">
+  {% csrf_token %}
+  <table>
+    {{ form.as_table }}
+    <tr>
+      <td></td>
+      <td>
+        <input type="submit" value="Add PRODUCT" />
+      </td>
+    </tr>
+  </table>
+</form>
+
+{% endblock %}
+```
+
+product_detail
+```html
+{% extends 'base.html' %}
+{% block content %}
+<p><a href="{% url 'main:show_main' %}"><button>← Back to Product List</button></a></p>
+
+<h1>{{ product.name }}</h1>
+<p> Rp {{ product.price }}|
+    <b>{{ product.get_category_display }}</b>{% if product.is_featured %} | 
+    <b>Featured</b>{% endif %}{% if product.is_product_hot %} | 
+    <b>Hot</b>{% endif %} | Views: {{ product.product_views }}</p>
+
+{% if product.thumbnail %}
+<img src="{{ product.thumbnail }}" alt="Product thumbnail" width="300">
+<br /><br />
+{% endif %}
+
+<p>{{ product.description }}</p>
+
+{% endblock content %}
+```
+
+g. buka settings.py dan tambahkan entri url proyek 
+```python
+CSRF_TRUSTED_ORIGINS = [
+    "https://syakirah-zahra-goalstrike.pbp.cs.ui.ac.id",
+    "https://pbp.cs.ui.ac.id/syakirah.zahra/goalstrike/"
+]
+```
+
+h. jalankan proyek dengan python manage.py runserver
+
+i. mengembalikan data dalam bentuk xml, dengan membuka views.py, tambahkan import 
+```python
+from django.http import HttpResponse
+from django.core import serializers
+```
+dan tambahkna juga fungsi
+```python
+def show_xml(request):
+     product_list = Product.objects.all()
+     xml_data = serializers.serialize("xml", product_list)
+     return HttpResponse(xml_data, content_type="application/xml")
+```
+lalu buka urls.py, lengkapi import dan path yang sesuai. jalankan proyek dengan  http://localhost:8000/xml/
+
+j. mengembalikan data dalam bentuk json, dengan membuka views.py dan tambahkan fungsi
+```python
+def show_json(request):
+    product_list = Product.objects.all()
+    json_data = serializers.serialize("json", product_list)
+    return HttpResponse(json_data, content_type="application/json")
+```
+lalu buka urls.py, lengkapi import dan path yang sesuai. jalankan proyek dengan  http://localhost:8000/json/
+
+l. mengembalikan data dalam bentuk xml berdasarkan id dengan menambahkan fungsi di dalam views.py 
+```python
+def show_xml_by_id(request, product_id):
+   try:
+       product_item = Product.objects.filter(pk=product_id)
+       xml_data = serializers.serialize("xml", product_item)
+       return HttpResponse(xml_data, content_type="application/xml")
+   except Product.DoesNotExist:
+       return HttpResponse(status=404)
+```
+lalu lengkapi urls.py dengan impoert dan path yang sesuai. jalankan proyek dengan  http://localhost:8000/xml/[news_id]/
+
+m. mengembalikan data dalam bentuk json berdasarkan id dengan menambahkan fungsi di dalam views.py 
+```python
+def show_json_by_id(request, product_id):
+   try:
+       product_item = Product.objects.get(pk=product_id)
+       json_data = serializers.serialize("json", [product_item])
+       return HttpResponse(json_data, content_type="application/json")
+   except Product.DoesNotExist:
+       return HttpResponse(status=404)
+```
+lalu lengkapi urls.py dengan impoert dan path yang sesuai. jalankan proyek dengan  http://localhost:8000/json/[news_id]/
+
+**6. Apakah ada feedback untuk asdos di tutorial 2 yang sudah kalian kerjakan?**
+
+Saya bisa mengerjakan tutorial dengan baik. Dokumen tutorial rapi dan terstruktur, saya bisa memahami materi dengan baik. Tutorial yang di berikan juga sangat membantu saya dalam menyelesaikan tugas 3 ini. Terima kasih Tim Asdos.
+
+**Hasil API Call dengan Postman**
+
+XML
+
+<img width="1920" height="1080" alt="Screenshot (999)" src="https://github.com/user-attachments/assets/7b47d88e-22b2-4ec8-9cb6-58da7eca21c1" />
+
+JSON
+
+<img width="1920" height="1080" alt="Screenshot (1000)" src="https://github.com/user-attachments/assets/4b283402-cdef-4c0b-9258-2d0dfe01af97" />
+
+
+XML with ID
+
+<img width="1920" height="1080" alt="Screenshot (1001)" src="https://github.com/user-attachments/assets/ab2685b0-fd81-4c98-bbfe-2c8efe80bcca" />
+
+
+JSON with ID
+
+<img width="1920" height="1080" alt="Screenshot (1002)" src="https://github.com/user-attachments/assets/9ae722aa-e516-4673-be0c-612703045659" />
