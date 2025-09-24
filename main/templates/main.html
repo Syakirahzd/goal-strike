@@ -9,9 +9,25 @@
 <h5>Class:</h5>
 <p>{{ class }}</p>
 
+
+
 <a href="{% url 'main:create_product' %}">
   <button>+ Add Product</button>
 </a>
+
+<a href="{% url 'main:logout' %}">
+  <button>Logout</button>
+</a>
+
+<h2>Welcome, {{ username }}!</h2>
+<h5>Sesi terakhir login: {{ last_login }}</h5>
+
+<a href="?filter=all">
+    <button type="button">All Product</button>
+</a>
+<a href="?filter=my">
+    <button type="button">My Product</button>
+</a> 
 
 <hr>
 
