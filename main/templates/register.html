@@ -1,32 +1,80 @@
 {% extends 'base.html' %}
 
 {% block meta %}
-<title>Register</title>
+<title>Register - GoalStrike</title>
 {% endblock meta %}
 
 {% block content %}
+<div class="bg-gray-50 min-h-screen flex items-center justify-center p-8">
+  <div class="max-w-md w-full">
+    <div class="card-style p-8 form-style">
+      <div class="text-center mb-8">
+        <h2 class="text-2xl mb-2">Join Us</h2>
+        <p>Create your GoalStrike account</p>
+      </div>
 
-<div>
-  <h1>Register</h1>
+      <!-- Form Errors Display -->
+      {% if form.non_field_errors %}
+        <div class="mb-6">
+          {% for error in form.non_field_errors %}
+            <div class="alert-error">{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
 
-  <form method="POST">
-    {% csrf_token %}
-    <table>
-      {{ form.as_table }}
-      <tr>
-        <td></td>
-        <td><input type="submit" name="submit" value="Daftar" /></td>
-      </tr>
-    </table>
-  </form>
+      {% if form.errors %}
+        <div class="mb-6">
+          {% for field, errors in form.errors.items %}
+            {% if field != '__all__' %}
+              {% for error in errors %}
+                <div class="alert-error mb-2">
+                  <strong>{{ field|title }}:</strong> {{ error }}
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
 
-  {% if messages %}
-  <ul>
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
-  {% endif %}
+      <form method="POST" class="space-y-5">
+        {% csrf_token %}
+        
+        <div>
+          <label for="username" class="block mb-2">{{ form.username.label }}</label>
+          {{ form.username }}
+        </div>
+
+        <div>
+          <label for="password1" class="block mb-2">{{ form.password1.label }}</label>
+          {{ form.password1 }}
+        </div>
+
+        <div>
+          <label for="password2" class="block mb-2">{{ form.password2.label }}</label>
+          {{ form.password2 }}
+        </div>
+
+        <button type="submit" class="btn-primary w-full">Create Account</button>
+      </form>
+
+      <!-- Messages Display -->
+      {% if messages %}
+        <div class="mt-6">
+          {% for message in messages %}
+            <div class="{% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-error{% else %}alert-info{% endif %} mb-2">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="mt-6 text-center">
+        <p class="text-sm">
+          Already have an account? 
+          <a href="{% url 'main:login' %}" class="text-highlight hover:underline">Sign In</a>
+        </p>
+      </div>
+    </div>
+  </div>
 </div>
-
 {% endblock content %}

@@ -46,3 +46,23 @@ class Product(models.Model):
 
 #     def __str__(self):
 #         return self.title
+
+
+### Demo tugas 4 ###
+
+# model news, field terserah, 1 news bisa punya bnyak author, 
+# model author, 1 author user 1
+# class Author(models.Model):
+#     name = models.CharField(max_length=255)
+#     user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+#     def __str__(self):
+#        return self.name
+    
+# class News(models.Model):
+#     title = models.CharField(max_length=255)
+#     authors = models.ManyToManyField(Author)
+
+#     def __str__(self):
+#        return self.title
+    

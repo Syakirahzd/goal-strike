@@ -1,0 +1,67 @@
+<article class="card-style overflow-hidden">
+  <!-- Thumbnail -->
+  <div class="aspect-[1/1] relative overflow-hidden bg-gray-50">
+    {% if product.thumbnail %}
+      <img src="{{ product.thumbnail }}" alt="{{ product.name }}"
+           class="w-full h-full object-contain transform hover:scale-105 transition-transform duration-500">
+    {% else %}
+      <div class="w-full h-full flex items-center justify-center text-gray-400 text-sm">No Image</div>
+    {% endif %}
+  </div>
+
+  <!-- Content -->
+  <div class="p-4">
+    <!-- Product Name & Price -->
+    <div class="flex justify-between items-start mb-2">
+      <h3 class="text-lg font-bold tracking-wide leading-tight line-clamp-2">
+        <a href="{% url 'main:show_product' product.id %}">
+          {{ product.name }}
+        </a>
+      </h3>
+      <span class="price text-sm">
+        Rp {{ product.price|floatformat:0 }}
+      </span>
+    </div>
+
+    <!-- Category + Status -->
+    <div class="flex items-center flex-wrap gap-2 mb-3">
+      <span class="badge-blue">
+        {{ product.get_category_display }}
+      </span>
+
+      {% if product.is_featured %}
+        <span class="badge-yellow">
+          Featured
+        </span>
+      {% endif %}
+      {% if product.is_product_hot %}
+        <span class="badge-red">
+          Hot
+        </span>
+      {% endif %}
+    </div>
+
+    <!-- Description -->
+    <p class="text-sm leading-relaxed line-clamp-3 mb-4">
+      {{ product.description|truncatewords:15 }}
+    </p>
+
+    <!-- Action -->
+    <div class="pt-3 border-t border-gray-100 flex justify-between items-center">
+      <a href="{% url 'main:show_product' product.id %}" class="text-highlight hover:underline text-sm">
+        Read more →
+      </a>
+
+      {% if user.is_authenticated and product.user == user %}
+        <div class="flex space-x-3">
+          <a href="{% url 'main:edit_product' product.id %}" class="text-gray-600 hover:text-gray-800 text-sm font-medium transition-colors">
+            Edit
+          </a>
+          <a href="{% url 'main:delete_product' product.id %}" class="text-red-600 hover:text-red-700 text-sm font-medium transition-colors">
+            Delete
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</article>
