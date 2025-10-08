@@ -8,54 +8,516 @@
 {% block content %}
 {% include 'navbar.html' %}
 
+
 <div class="bg-gray-50 w-full pt-16 min-h-screen">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-    <!-- Header Section -->
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">Latest Product</h1>
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Latest Products</h1>
       <p class="text-gray-600">Stay updated with the latest product stories and analysis</p>
     </div>
 
-    <!-- Filter Section -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 card-style p-4">
+    <div class="flex items-center space-x-4 mb-4">
+        <button onclick="showModal()" class="btn-primary">
+            Create Product by AJAX
+        </button>
+
+        <button id="refresh-products-btn" class="btn-secondary flex items-center space-x-2">
+            <svg id="refresh-icon" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>Refresh</span>
+        </button>
+    </div>
+
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 bg-white rounded-lg border border-gray-200 p-4">
       <div class="flex space-x-3 mb-4 sm:mb-0">
-        <!-- All product -->
-        <a href="?" class="{% if request.GET.filter == 'all' or not request.GET.filter %} btn-primary {% else %} btn-cancel {% endif %}">
-          All product
-        </a>
-        <!-- My product -->
-        <a href="?filter=my" class="{% if request.GET.filter == 'my' %} btn-primary {% else %} btn-cancel {% endif %}">
-          My product
-        </a>
+        <a id="filter-all" class="cursor-pointer">All Products</a>
+        <a id="filter-my" class="cursor-pointer">My Products</a>
       </div>
       {% if user.is_authenticated %}
-        <div class="text-sm text-gray-500">
-          Last login: {{ last_login }}
-        </div>
+        <div class="text-sm text-gray-500">Last login: {{ last_login|default:"Never" }}</div>
       {% endif %}
     </div>
 
-    <!-- Product Grid -->
-    {% if not product_list %}
-      <div class="card-style p-12 text-center">
-        <div class="w-32 h-32 mx-auto mb-4">
-          <img src="{% static 'image/no-product.png' %}" alt="No product available" class="w-full h-full object-contain">
-        </div>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">No product found</h3>
-        <p class="text-gray-500 mb-6">Be the first to share product with the community.</p>
-        <a href="{% url 'main:create_product' %}" class="btn-primary inline-flex items-center px-4 py-2 rounded-md">
-          Create Product
-        </a>
-      </div>
-    {% else %}
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for product in product_list %}
-          {% include 'card_product.html' with product=product %}
-        {% endfor %}
-      </div>
-    {% endif %}
+    <div id="loading" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
+      <svg class="animate-spin h-8 w-8 text-green-600 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+      </svg>
+      <p class="text-gray-600 mt-3">Loading products...</p>
+    </div>
 
+    <div id="error" class="hidden bg-red-50 border border-red-200 rounded-lg p-4 text-red-800"></div>
+
+    <div id="grid" class="hidden"></div>
+
+    <div id="empty" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
+      <div class="w-32 h-32 mx-auto mb-4">
+        <img src="{% static 'image/no-product.png' %}" alt="No Products available" class="w-full h-full object-contain">
+      </div>
+      <h3 class="text-xl font-semibold text-gray-900 mb-2">No products found</h3>
+      <p class="text-gray-600 mb-6">Be the first to share a product</p>
+      <a href="{% url 'main:create_product' %}" class="btn-primary inline-block">
+        Create Product
+      </a>
+    </div>
   </div>
 </div>
+
+<script>
+// ==================== TOAST NOTIFICATION SYSTEM ====================
+
+/**
+ * Universal Toast Notification Function
+ * @param {string} message - The message to display
+ * @param {string} type - Type of toast: 'success', 'error', 'info', 'warning'
+ */
+function showToast(message, type = 'info') {
+    const toastContainer = document.getElementById('toast-container');
+    
+    const iconColors = {
+        success: 'text-green-500',
+        error: 'text-red-500',
+        info: 'text-blue-500',
+        warning: 'text-yellow-500'
+    };
+    
+    const icons = {
+        success: '<path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>',
+        error: '<path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.707-11.707a1 1 0 0 0-1.414-1.414L10 8.586 7.707 6.293a1 1 0 0 0-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 1 0 1.414 1.414L10 11.414l2.293 2.293a1 1 0 1 0 1.414-1.414L11.414 10l2.293-2.293Z"/>',
+        info: '<path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm1-11a1 1 0 1 0-2 0v4a1 1 0 1 0 2 0V7Zm-1 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/>',
+        warning: '<path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm1-11a1 1 0 1 0-2 0v4a1 1 0 1 0 2 0V7Zm-1 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/>'
+    };
+    
+    const toast = document.createElement('div');
+    toast.className = 'toast-item flex items-center w-full max-w-xs p-4 space-x-4 rtl:space-x-reverse text-gray-500 bg-white divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg shadow';
+    toast.setAttribute('role', 'alert');
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(100%)';
+    toast.style.transition = 'all 0.3s ease-out';
+    
+    toast.innerHTML = `
+        <div class="${iconColors[type] || iconColors.info}">
+            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                ${icons[type] || icons.info}
+            </svg>
+        </div>
+        <div class="ps-4 text-sm font-normal">${message}</div>
+        <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8" aria-label="Close">
+            <span class="sr-only">Close</span>
+            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+            </svg>
+        </button>
+    `;
+    
+    toastContainer.appendChild(toast);
+    
+    // Trigger animation
+    setTimeout(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateX(0)';
+    }, 10);
+    
+    const closeButton = toast.querySelector('button[aria-label="Close"]');
+    const hideToast = () => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    };
+    
+    const autoHideTimeout = setTimeout(hideToast, 5000);
+    
+    if (closeButton) {
+        closeButton.addEventListener('click', () => {
+            clearTimeout(autoHideTimeout);
+            hideToast();
+        });
+    }
+}
+
+/**
+ * Check for URL parameters and show appropriate toast
+ */
+function checkURLParametersForToast() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Success messages
+    if (urlParams.has('success')) {
+        const successType = urlParams.get('success');
+        const messages = {
+            'login': 'Successfully logged in! Welcome back.',
+            'logout': 'Successfully logged out. See you soon!',
+            'register': 'Account created successfully! Welcome to GoalStrike.',
+            'created': 'Product created successfully!',
+            'updated': 'Product updated successfully!',
+            'deleted': 'Product deleted successfully!'
+        };
+        showToast(messages[successType] || 'Operation completed successfully!', 'success');
+    }
+    
+    // Error messages
+    if (urlParams.has('error')) {
+        const errorType = urlParams.get('error');
+        const messages = {
+            'login': 'Login failed. Please check your credentials.',
+            'register': 'Registration failed. Please try again.',
+            'permission': 'You do not have permission to perform this action.',
+            'notfound': 'Product not found.',
+            'failed': 'Operation failed. Please try again.'
+        };
+        showToast(messages[errorType] || 'An error occurred. Please try again.', 'error');
+    }
+    
+    // Info messages
+    if (urlParams.has('info')) {
+        const infoType = urlParams.get('info');
+        const messages = {
+            'login_required': 'Please login to continue.',
+            'verification': 'Please verify your email address.'
+        };
+        showToast(messages[infoType] || 'Information', 'info');
+    }
+    
+    // Clean URL after showing toast
+    if (urlParams.has('success') || urlParams.has('error') || urlParams.has('info')) {
+        const cleanUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+    }
+}
+
+
+// --- FUNGSI PLACEHOLDER ---
+function showModal() {
+    alert("Fungsi 'showModal()' untuk AJAX create product perlu diimplementasikan.");
+}
+
+// --- KONFIGURASI DAN ELEMENT DOM ---
+const PRODUCT_API_ENDPOINT = "{% url 'main:show_json' %}";
+const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
+
+const loadingSpinner = document.getElementById('loading');
+const errorMessage = document.getElementById('error');
+const emptyStateDisplay = document.getElementById('empty');
+const productGridContainer = document.getElementById('grid');
+const showAllProductButton = document.getElementById('filter-all');
+const showMyProductButton = document.getElementById('filter-my');
+const refreshButton = document.getElementById('refresh-products-btn');
+const refreshIcon = document.getElementById('refresh-icon');
+
+let activeFilter = 'all';
+let allProductData = [];
+let isRefreshing = false;
+
+// --- FUNGSI-FUNGSI UTAMA ---
+
+function updateFilterButtonsAppearance() {
+  if (!showAllProductButton || !showMyProductButton) return;
+  
+  if (activeFilter === 'all') {
+    showAllProductButton.className = 'btn-primary cursor-pointer';
+    showMyProductButton.className = 'btn-cancel cursor-pointer';
+  } else {
+    showMyProductButton.className = 'btn-primary cursor-pointer';
+    showAllProductButton.className = 'btn-cancel cursor-pointer';
+  }
+}
+
+function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
+  loadingSpinner.classList.toggle('hidden', !showLoading);
+  errorMessage.classList.toggle('hidden', !showError);
+  emptyStateDisplay.classList.toggle('hidden', !showEmpty);
+  productGridContainer.classList.toggle('hidden', !showGrid);
+  
+  if (showGrid) {
+    productGridContainer.className = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6';
+  }
+}
+
+function getReadableCategoryName(categoryCode) {
+  const categoryMapping = {
+    jersey: 'Jersey',
+    balls: 'Balls',
+    socks: 'Socks',
+    gloves: 'Gloves',
+    backpacks: 'Backpacks',
+    soccerCleats: 'Soccer Cleats',
+  };
+  return categoryMapping[categoryCode] || categoryCode;
+}
+
+function buildProductCardElement(productItem) {
+    const articleElement = document.createElement('article');
+    articleElement.className = 'card-style flex flex-col bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow';
+
+    const fields = productItem.fields;
+    
+    const detailLink = `{% url 'main:show_product' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', productItem.pk);
+    const deleteLink = `{% url 'main:delete_product' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', productItem.pk);
+    const editLink = `{% url 'main:edit_product' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', productItem.pk);
+
+    const formattedPrice = new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+    }).format(fields.price || 0);
+
+    const shortDescription = fields.description 
+        ? fields.description.substring(0, 100) + (fields.description.length > 100 ? '...' : '')
+        : 'No description available.';
+
+    const thumbnailHtml = fields.thumbnail
+        ? `<img src='${fields.thumbnail}' alt='${fields.name}' class='w-full h-full object-cover'>`
+        : `<div class='w-full h-full bg-gray-100 flex items-center justify-center'><span class="text-gray-400 text-sm">No Image</span></div>`;
+    
+    const categoryLabel = getReadableCategoryName(fields.category);
+    const featuredBadge = fields.is_featured 
+        ? `<span class='badge-yellow inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800'>Featured</span>` 
+        : '';
+    const hotBadge = fields.product_views > 20 
+        ? `<span class='badge-red inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800'>Hot</span>` 
+        : '';
+
+    const canModify = CURRENT_USER_ID && CURRENT_USER_ID !== '' && Number(CURRENT_USER_ID) === Number(fields.user);
+    const actionButtons = canModify 
+        ? `<div class="flex items-center space-x-3">
+              <a href='${editLink}' class='text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors'>Edit</a>
+              <button onclick='handleDeleteProduct("${productItem.pk}", "${fields.name}")' class='text-sm text-red-600 hover:text-red-800 font-medium transition-colors'>Delete</button>
+            </div>`
+        : '';
+
+    const completeCardHtml = `
+      <div class="relative">
+        <a href="${detailLink}" class="block aspect-square overflow-hidden">
+          ${thumbnailHtml}
+        </a>
+        <div class="absolute top-3 left-3 flex flex-col space-y-2">
+          <span class="badge-blue inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-600 text-white">${categoryLabel}</span>
+        </div>
+        <div class="absolute top-3 right-3 flex flex-col space-y-2 items-end">
+            ${featuredBadge}
+            ${hotBadge}
+        </div>
+      </div>
+      <div class="p-5 flex flex-col flex-1">
+        <div class="flex justify-between items-start mb-2">
+            <h3 class="pr-4 flex-1">
+                <a href="${detailLink}" class="text-base font-semibold leading-snug text-gray-900 hover:text-green-600 transition-colors line-clamp-2">${fields.name}</a>
+            </h3>
+            <p class="price text-base font-bold text-green-600 whitespace-nowrap ml-2">${formattedPrice}</p>
+        </div>
+        
+        <div class="text-sm text-gray-500 mb-3">
+            ${fields.product_views} views
+        </div>
+
+        <p class="text-gray-600 text-sm mb-4 flex-grow line-clamp-3">
+            ${shortDescription}
+        </p>
+        
+        <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
+            <a href="${detailLink}" class="text-green-600 text-sm font-semibold hover:text-green-700 transition-colors">
+                Read more →
+            </a>
+            ${actionButtons}
+        </div>
+      </div>
+    `;
+
+    articleElement.innerHTML = completeCardHtml;
+    return articleElement;
+}
+
+function renderAllProductCards(productItems) {
+  productGridContainer.innerHTML = '';
+  productItems.forEach(productItem => {
+    const cardElement = buildProductCardElement(productItem);
+    productGridContainer.appendChild(cardElement);
+  });
+}
+
+function filterAndDisplayProduct() {
+  updateFilterButtonsAppearance();
+  
+  const filteredProduct = activeFilter === 'all' 
+    ? allProductData 
+    : allProductData.filter(product => {
+        if (!CURRENT_USER_ID || CURRENT_USER_ID === '') return false;
+        return Number(product.fields.user) === Number(CURRENT_USER_ID);
+      });
+  
+  if (filteredProduct.length === 0) {
+    displayPageSection({ showEmpty: true });
+  } else {
+    renderAllProductCards(filteredProduct);
+    displayPageSection({ showGrid: true });
+  }
+}
+
+async function fetchProductFromServer(showLoadingState = true) {
+  try {
+    if (showLoadingState) {
+      displayPageSection({ showLoading: true });
+    }
+    
+    const response = await fetch(PRODUCT_API_ENDPOINT, {
+      headers: { 'Accept': 'application/json' },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch product data from server');
+    }
+
+    const productData = await response.json();
+    allProductData = productData || [];
+    
+    filterAndDisplayProduct();
+  } catch (error) {
+    console.error('Error loading products:', error);
+    errorMessage.textContent = 'Sorry, we failed to load the products. Please try again later.';
+    displayPageSection({ showError: true });
+  }
+}
+
+
+async function handleDeleteProduct(productId, productName) {
+    if (!confirm(`Are you sure you want to delete "${productName}"?`)) {
+        return;
+    }
+    
+    const deleteUrl = `{% url 'main:delete_product' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', productId);
+    
+    try {
+        const response = await fetch(deleteUrl, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        });
+        
+        if (response.ok) {
+            showToast('Product deleted successfully!', 'success');
+            await fetchProductFromServer(false);
+        } else {
+            showToast('Failed to delete product. Please try again.', 'error');
+        }
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        showToast('An error occurred while deleting the product.', 'error');
+    }
+}
+
+// --- FUNGSI REFRESH ---
+async function handleRefreshProducts() {
+    if (isRefreshing) return;
+    
+    isRefreshing = true;
+    refreshButton.disabled = true;
+    
+    // Add spinning animation to refresh icon
+    refreshIcon.classList.add('animate-spin');
+    
+    try {
+        await fetchProductFromServer(false);
+        showToast('Products refreshed successfully!', 'success');
+    } catch (error) {
+        showToast('Failed to refresh products', 'error');
+    } finally {
+        // Remove spinning animation
+        setTimeout(() => {
+            refreshIcon.classList.remove('animate-spin');
+            isRefreshing = false;
+            refreshButton.disabled = false;
+        }, 500);
+    }
+}
+
+// --- EVENT HANDLERS ---
+function handleShowAllProductClick() {
+  activeFilter = 'all';
+  filterAndDisplayProduct();
+}
+
+function handleShowMyProductClick() {
+  if (!CURRENT_USER_ID || CURRENT_USER_ID === '') {
+    showToast('Please login to view your products', 'warning');
+    return;
+  }
+  activeFilter = 'my';
+  filterAndDisplayProduct();
+}
+
+// --- INISIALISASI ---
+function initializeProductPage() {
+  if (showAllProductButton && showMyProductButton) {
+    showAllProductButton.addEventListener('click', handleShowAllProductClick);
+    showMyProductButton.addEventListener('click', handleShowMyProductClick);
+  }
+  
+  if (refreshButton) {
+    refreshButton.addEventListener('click', handleRefreshProducts);
+  }
+  
+  // Initialize toasts
+  initializeServerToasts();
+  checkURLParametersForToast();
+  
+  // Load products
+  fetchProductFromServer();
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeProductPage);
+} else {
+  initializeProductPage();
+}
+
+// Listen for custom events
+document.addEventListener('productAdded', function() {
+    fetchProductFromServer(false);
+    showToast('New product added successfully!', 'success');
+});
+
+document.addEventListener('productUpdated', function() {
+    fetchProductFromServer(false);
+    showToast('Product updated successfully!', 'success');
+});
+
+</script>
+
+
+<div id="django-messages" style="display:none;" 
+     data-messages='[
+        {% if messages %}
+            {% for message in messages %}
+                {
+                    "text": "{{ message|escapejs }}",
+                    "type": "{% if 'success' in message.tags %}success{% elif 'error' in message.tags %}error{% elif 'warning' in message.tags %}warning{% elif 'info' in message.tags %}info{% else %}info{% endif %}"
+                }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        {% endif %}
+     ]'>
+</div>
+
+<script>
+function initializeServerToasts() {
+    const messagesElement = document.getElementById('django-messages');
+    if (messagesElement) {
+        try {
+            const messages = JSON.parse(messagesElement.dataset.messages || '[]');
+            messages.forEach(msg => {
+                if (msg.text) {
+                    showToast(msg.text, msg.type);
+                }
+            });
+        } catch (e) {
+            console.error('Error parsing messages:', e);
+        }
+    }
+}
+</script>
+
 {% endblock content %}

@@ -18,10 +18,13 @@
           {{ product.name }}
         </a>
       </h3>
+      
       <span class="price text-sm">
         Rp {{ product.price|floatformat:0 }}
       </span>
     </div>
+
+
 
     <!-- Category + Status -->
     <div class="flex items-center flex-wrap gap-2 mb-3">
@@ -39,6 +42,12 @@
           Hot
         </span>
       {% endif %}
+    </div>
+
+    <div class="p-1">
+    <div class="flex items-center text-sm text-gray-500 mb-3">
+      <span class="mx-2">•</span>
+      <span>{{ product.product_views }} views</span>
     </div>
 
     <!-- Description -->

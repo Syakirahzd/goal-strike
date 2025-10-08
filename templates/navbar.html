@@ -1,0 +1,122 @@
+<nav class="navbar fixed top-0 left-0 w-full z-50">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+
+      <!-- Brand -->
+      <div class="flex items-center">
+        <h1 class="text-xl font-bold">
+          <div class="flex items-center">
+            <h1 class="text-xl font-semibold">
+                <span class="text-blue-800">Goal</span><span class="text-gray-900">Strike</span>
+            </h1>
+            </div>
+        </h1>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <div class="hidden md:flex items-center space-x-8">
+        <a href="/" class="nav-link">Home</a>
+        <a href="{% url 'main:create_product' %}" class="nav-link">Create Product</a>
+      </div>
+
+      <!-- Desktop User Section -->
+      <div class="hidden md:flex items-center space-x-6">
+        {% if user.is_authenticated %}
+          <div class="text-right">
+            <div class="text-sm font-semibold">{{ username|default:user.username }}</div>
+            <div class="text-xs text-gray-500">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</div>
+          </div>
+          <a href="{% url 'main:logout' %}" class="nav-link text-red">Logout</a>
+        {% else %}
+          <a href="{% url 'main:login' %}" class="nav-link">Login</a>
+          <a href="{% url 'main:register' %}" class="btn-primary px-4 py-2">Register</a>
+        {% endif %}
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <div class="md:hidden flex items-center">
+        <button id="mobile-menu-toggle" class="nav-toggle">
+          <span class="sr-only">Open menu</span>
+          <!-- Hamburger Icon -->
+          <svg id="icon-hamburger" class="h-6 w-6 block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+          <!-- X Icon -->
+          <svg id="icon-close" class="h-6 w-6 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+    <div class="px-6 py-4 space-y-4">
+
+      <!-- Mobile Navigation -->
+      <div class="space-y-1">
+        <a href="/" class="nav-link block py-2">Home</a>
+        <a href="{% url 'main:create_product' %}" class="nav-link block py-2">Create Product</a>
+      </div>
+
+      <!-- Mobile User Section -->
+      <div class="border-t border-gray-200 pt-4">
+        {% if user.is_authenticated %}
+          <div class="mb-4">
+            <div class="font-medium">{{ username|default:user.username }}</div>
+            <div class="text-sm text-gray-500">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</div>
+          </div>
+          <a href="{% url 'main:logout' %}" class="nav-link text-red block py-2">Logout</a>
+        {% else %}
+          <div class="space-y-3">
+            <a href="{% url 'main:login' %}" class="nav-link block py-2">Login</a>
+            <a href="{% url 'main:register' %}" class="btn-primary block py-2 text-center">Register</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+<script>
+// Logout handler in navbar
+document.addEventListener('DOMContentLoaded', function() {
+    const logoutLinks = document.querySelectorAll('a[href*="logout"]');
+    
+    logoutLinks.forEach(function(link) {
+        link.addEventListener('click', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const response = await fetch(this.href, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Check if showToast function exists
+                    if (typeof showToast === 'function') {
+                        showToast('Success', data.message, 'success');  // Changed title from 'Logged Out' to 'Success'
+                    } else {
+                        console.log('Toast:', data.message);
+                    }
+                    
+                    // Redirect after delay
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 1500);
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+                window.location.href = this.href;
+            }
+        });
+    });
+});
+</script>
