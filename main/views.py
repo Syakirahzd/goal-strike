@@ -26,6 +26,12 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from django.utils.html import strip_tags
+import requests
+
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.html import strip_tags
+import json
+from django.http import JsonResponse
 
 # Create your views here.
 @login_required(login_url='/login')
@@ -79,6 +85,11 @@ def show_xml(request):
      return HttpResponse(xml_data, content_type="application/xml")
 
 def show_json(request):
+    sort_order = request.GET.get('sort', 'asc')
+    if sort_order=='desc':
+        order_field ='-price'
+    else:
+        order_field ='price'
     product_list = Product.objects.all()
     data = [
         {
@@ -93,6 +104,7 @@ def show_json(request):
                 'product_views': product.product_views,
                 'is_featured': product.is_featured,
                 'user': product.user_id,
+                'username': product.user.username,
             }
         }
         for product in product_list
@@ -319,18 +331,50 @@ def update_product_ajax(request, id):
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
 
 
-### DEMO Tugas 2 ##
-# def add_employee(request):
-#     new_employee = Employee.objects.create(
-#         name = "Syakirah",
-#         age = 19,
-#         persona = "terserah",
-#         )
+def proxy_image(request):
+    image_url = request.GET.get('url')
+    if not image_url:
+        return HttpResponse('No URL provided', status=400)
     
-#     context = {
-#         "name" : new_employee.name,
-#         "age" : new_employee.age,
-#         "persona" : new_employee.persona
-#     }
+    try:
+        # Fetch image from external source
+        response = requests.get(image_url, timeout=10)
+        response.raise_for_status()
+        
+        # Return the image with proper content type
+        return HttpResponse(
+            response.content,
+            content_type=response.headers.get('Content-Type', 'image/jpeg')
+        )
+    except requests.RequestException as e:
+        return HttpResponse(f'Error fetching image: {str(e)}', status=500)
+    
 
-#     return render(request, "employee.html", context)
+@csrf_exempt
+def create_product_flutter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+
+        name = strip_tags(data.get("name", ""))
+        price = data.get("price", 0)
+        description = strip_tags(data.get("description", ""))
+        category = data.get("category", "")
+        thumbnail = data.get("thumbnail", "")
+        is_featured = data.get("is_featured", False)
+
+        user = request.user  # user dari session CookieRequest Flutter
+
+        new_product = Product(
+            name=name,
+            price=price,
+            description=description,
+            category=category,
+            thumbnail=thumbnail,
+            is_featured=is_featured,
+            user=user,
+        )
+        new_product.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+
+    return JsonResponse({"status": "error"}, status=401)

@@ -206,6 +206,8 @@ const showAllProductButton = document.getElementById('filter-all');
 const showMyProductButton = document.getElementById('filter-my');
 const refreshButton = document.getElementById('refresh-products-btn');
 const refreshIcon = document.getElementById('refresh-icon');
+const showAsc = document.getElementById('Ascending');
+const showDsc = document.getElementById('Decending');
 
 let activeFilter = 'all';
 let allProductData = [];
@@ -219,7 +221,17 @@ function updateFilterButtonsAppearance() {
   if (activeFilter === 'all') {
     showAllProductButton.className = 'btn-primary cursor-pointer';
     showMyProductButton.className = 'btn-cancel cursor-pointer';
-  } else {
+  } 
+  else if (activeFilter === 'asc'){
+    ShowAsc.className ='btn-primary cursor-pointer';
+    ShowAsc.className ='btn-cancel cursor-pointer';
+
+  }
+  else if (activeFilter === 'dsc'){
+    ShowDsc.className ='btn-primary cursor-pointer';
+    ShowDsc.className ='btn-cancel cursor-pointer';
+  }
+  else {
     showMyProductButton.className = 'btn-primary cursor-pointer';
     showAllProductButton.className = 'btn-cancel cursor-pointer';
   }
